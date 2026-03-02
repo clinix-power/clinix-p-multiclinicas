@@ -1,7 +1,9 @@
 'use client'
 
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import './landing-premium.css'
 import { 
   Brain, 
   FileText, 
@@ -24,8 +26,139 @@ import WhatsAppButton from '@/components/WhatsAppButton'
 import DashboardDemo from '@/components/DashboardDemo'
 
 export default function LandingPage() {
+  const [currentPhrase, setCurrentPhrase] = useState(0)
+  const [displayText, setDisplayText] = useState('')
+  const [isTyping, setIsTyping] = useState(true)
+  const [isFiring, setIsFiring] = useState(false)
+  const [zappedCard, setZappedCard] = useState<number | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const aiCardRef = useRef<HTMLDivElement>(null)
+  const featureCardsRef = useRef<(HTMLDivElement | null)[]>([])
+
+  const phrases = [
+    'IA escreve evoluções em segundos',
+    'Laudos PDF com CREFITO',
+    'Dashboard financeiro nível banking',
+    'Assinatura digital segura',
+    'Agenda inteligente'
+  ]
+
+  // Typewriter Effect
+  useEffect(() => {
+    const phrase = phrases[currentPhrase]
+    let charIndex = 0
+    let timeout: NodeJS.Timeout
+
+    if (isTyping) {
+      const typeChar = () => {
+        if (charIndex <= phrase.length) {
+          setDisplayText(phrase.slice(0, charIndex))
+          charIndex++
+          timeout = setTimeout(typeChar, 50)
+        } else {
+          setIsTyping(false)
+          timeout = setTimeout(() => {
+            fireLightning()
+          }, 800)
+        }
+      }
+      typeChar()
+    } else {
+      timeout = setTimeout(() => {
+        setDisplayText('')
+        setCurrentPhrase((prev) => (prev + 1) % phrases.length)
+        setIsTyping(true)
+      }, 2000)
+    }
+
+    return () => clearTimeout(timeout)
+  }, [currentPhrase, isTyping])
+
+  // Lightning Effect
+  const fireLightning = () => {
+    const canvas = canvasRef.current
+    const aiCard = aiCardRef.current
+    if (!canvas || !aiCard) return
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    // Set canvas size
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    // Get AI card position
+    const aiRect = aiCard.getBoundingClientRect()
+    const startX = aiRect.left + aiRect.width / 2
+    const startY = aiRect.bottom
+
+    // Pick random feature card
+    const validCards = featureCardsRef.current.filter(card => card !== null)
+    if (validCards.length === 0) return
+    
+    const targetIndex = Math.floor(Math.random() * validCards.length)
+    const targetCard = validCards[targetIndex]
+    if (!targetCard) return
+
+    const targetRect = targetCard.getBoundingClientRect()
+    const endX = targetRect.left + targetRect.width / 2
+    const endY = targetRect.top
+
+    // Fire animation
+    setIsFiring(true)
+    
+    // Draw lightning
+    ctx.strokeStyle = '#a855f7'
+    ctx.lineWidth = 3
+    ctx.shadowBlur = 20
+    ctx.shadowColor = '#a855f7'
+    
+    const segments = 8
+    const points: {x: number, y: number}[] = [{x: startX, y: startY}]
+    
+    for (let i = 1; i < segments; i++) {
+      const progress = i / segments
+      const x = startX + (endX - startX) * progress + (Math.random() - 0.5) * 40
+      const y = startY + (endY - startY) * progress
+      points.push({x, y})
+    }
+    points.push({x: endX, y: endY})
+
+    ctx.beginPath()
+    ctx.moveTo(points[0].x, points[0].y)
+    for (let i = 1; i < points.length; i++) {
+      ctx.lineTo(points[i].x, points[i].y)
+    }
+    ctx.stroke()
+
+    // Zap the card
+    setZappedCard(targetIndex)
+    
+    setTimeout(() => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      setIsFiring(false)
+      setZappedCard(null)
+    }, 400)
+  }
+
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom right, #f8fafc, #ffffff, rgba(243,232,255,0.3))' }}>
+    <div className="min-h-screen" style={{ 
+      background: 'linear-gradient(to bottom right, #fafbff, #ffffff, rgba(243,232,255,0.15))',
+      fontFamily: '"DM Sans", -apple-system, BlinkMacSystemFont, sans-serif'
+    }}>
+      {/* Lightning Canvas */}
+      <canvas 
+        ref={canvasRef}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          pointerEvents: 'none',
+          zIndex: 100
+        }}
+      />
       {/* 1. HEADER FIXO (sticky) */}
       <header className="fixed top-0 w-full z-50" style={{ 
         background: 'rgba(248,249,252,.82)', 
@@ -106,47 +239,213 @@ export default function LandingPage() {
               </span>
             </motion.div>
 
-            <h1 className="font-bold mb-6" style={{ 
-              fontSize: '1.9rem', 
-              letterSpacing: '-.045em',
-              lineHeight: '1.1'
+            <h1 style={{ 
+              fontFamily: '"Outfit", sans-serif',
+              fontSize: 'clamp(2.2rem, 5vw, 3.8rem)', 
+              fontWeight: 900,
+              letterSpacing: '-.055em',
+              lineHeight: '1.08',
+              marginBottom: '2rem'
             }}>
-              <span style={{ color: 'rgba(18,18,28,.92)' }}>Sua clínica merece mais do que planilha e papel.</span>
-              <br />
-              <span style={{ color: '#a855f7' }}>A plataforma de gestão mais inteligente para fisioterapeutas do Brasil.</span>
+              <span style={{ 
+                display: 'block',
+                color: '#1a1a2e',
+                marginBottom: '0.15em'
+              }}>Sua clínica merece mais</span>
+              <span style={{ 
+                display: 'block',
+                background: 'linear-gradient(135deg, #d946ef 0%, #a855f7 45%, #818cf8 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text'
+              }}>do que planilha e papel.</span>
             </h1>
             
-            <p className="text-lg mb-3 max-w-2xl mx-auto" style={{ 
-              color: 'rgba(18,18,28,.50)',
-              lineHeight: '1.5'
-            }}>
-              A inteligência que automatiza sua clínica enquanto você foca no paciente.
-              <br />
-              Evoluções com IA GEMINI, dashboard financeiro mais sofisticado do mercado e muito mais em um só lugar.{' '}
-              <svg 
-                className="inline-block w-5 h-5 ml-1" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
-                style={{ verticalAlign: 'middle', marginTop: '-2px' }}
-              >
-                <path 
-                  d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" 
-                  fill="#a855f7" 
-                  stroke="#a855f7" 
-                  strokeWidth="1.5" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </p>
+            {/* IA Card - Ultra Premium */}
+            <div 
+              ref={aiCardRef}
+              id="ai-card"
+              className={`max-w-2xl mx-auto mb-12 ${isFiring ? 'firing' : ''}`}
+              style={{
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(20px) saturate(180%)',
+                border: '1px solid rgba(168, 85, 247, 0.12)',
+                borderRadius: '20px',
+                padding: '1.5rem 2rem',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                transform: isFiring ? 'scale(1.02)' : 'scale(1)',
+                boxShadow: isFiring ? '0 12px 48px rgba(168, 85, 247, 0.25), 0 0 0 2px rgba(168, 85, 247, 0.3)' : '0 8px 32px rgba(168, 85, 247, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04)'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #d946ef, #a855f7)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  boxShadow: '0 4px 12px rgba(168, 85, 247, 0.3)'
+                }}>
+                  <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'white' }}>C</span>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{
+                    fontSize: '0.7rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    color: '#a855f7',
+                    marginBottom: '0.35rem',
+                    fontFamily: '"Outfit", sans-serif'
+                  }}>
+                    • CONSULTORA CLINIX • IA
+                  </div>
+                  <div id="tw-text" style={{
+                    fontSize: '0.95rem',
+                    color: '#1a1a2e',
+                    fontWeight: 500,
+                    minHeight: '24px',
+                    fontFamily: '"DM Sans", sans-serif'
+                  }}>
+                    {displayText}<span style={{ 
+                      display: 'inline-block',
+                      width: '2px',
+                      height: '18px',
+                      background: '#a855f7',
+                      marginLeft: '2px',
+                      animation: 'blink 1s infinite',
+                      verticalAlign: 'middle'
+                    }} />
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8 mt-10">
+            {/* Feature Pills Grid */}
+            <div id="fc-grid" style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+              gap: '0.75rem',
+              maxWidth: '900px',
+              margin: '0 auto 3rem',
+              padding: '0 1rem'
+            }}>
+              {[
+                { icon: '⚡', text: 'IA escreve evoluções em segundos' },
+                { icon: '📄', text: 'Laudos PDF com CREFITO' },
+                { icon: '📊', text: 'Dashboard financeiro nível banking' },
+                { icon: '✍️', text: 'Assinatura digital segura' },
+                { icon: '📅', text: 'Agenda inteligente' }
+              ].map((feature, index) => {
+                const isZapped = zappedCard === index
+                return (
+                  <div
+                    key={index}
+                    ref={el => { featureCardsRef.current[index] = el; }}
+                    id={`fc-${index}`}
+                    className={isZapped ? 'zapped' : ''}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.9)',
+                      backdropFilter: 'blur(12px)',
+                      border: '1px solid rgba(0, 0, 0, 0.06)',
+                      borderRadius: '14px',
+                      padding: '1rem 1.25rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.75rem',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      boxShadow: isZapped 
+                        ? '0 0 0 3px rgba(168, 85, 247, 0.3), 0 8px 24px rgba(168, 85, 247, 0.2)'
+                        : '0 2px 8px rgba(0, 0, 0, 0.04)',
+                      transform: isZapped ? 'scale(1.05)' : 'scale(1)',
+                      cursor: 'default'
+                    }}
+                  >
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '10px',
+                      background: isZapped ? 'rgba(168, 85, 247, 0.15)' : 'rgba(168, 85, 247, 0.08)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.1rem',
+                      flexShrink: 0,
+                      border: `1px solid ${isZapped ? 'rgba(168, 85, 247, 0.3)' : 'rgba(168, 85, 247, 0.12)'}`,
+                      transition: 'all 0.3s'
+                    }}>
+                      {feature.icon}
+                    </div>
+                    <span style={{
+                      fontSize: '0.875rem',
+                      fontWeight: 500,
+                      color: '#1a1a2e',
+                      fontFamily: '"DM Sans", sans-serif'
+                    }}>
+                      {feature.text}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
               <Link 
                 href="/cadastro-clinica"
-                className="cp-btn-primary px-8 py-3.5 text-base font-semibold text-white inline-flex items-center justify-center gap-2"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  padding: '1rem 2.5rem',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #d946ef, #a855f7)',
+                  color: 'white',
+                  fontSize: '1rem',
+                  fontWeight: 700,
+                  fontFamily: '"Outfit", sans-serif',
+                  textDecoration: 'none',
+                  boxShadow: '0 8px 24px rgba(168, 85, 247, 0.35), 0 2px 8px rgba(168, 85, 247, 0.2)',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 12px 32px rgba(168, 85, 247, 0.45), 0 4px 12px rgba(168, 85, 247, 0.3)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(168, 85, 247, 0.35), 0 2px 8px rgba(168, 85, 247, 0.2)'
+                }}
               >
-                Ativar Tecnologia CLINIX por R$ 19,90
+                <Zap className="w-5 h-5" style={{ fill: 'currentColor' }} />
+                Ativar Clinix por R$ 19,90
+              </Link>
+              <Link
+                href="#planos"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  padding: '1rem 1.75rem',
+                  fontSize: '0.95rem',
+                  fontWeight: 500,
+                  color: '#1a1a2e',
+                  textDecoration: 'none',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#a855f7'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#1a1a2e'
+                }}
+              >
+                Ver planos
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>

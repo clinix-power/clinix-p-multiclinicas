@@ -1,0 +1,108 @@
+/* ═══════════════════════════════════════════════════════════════
+   CLINIX POWER — ULTRA PREMIUM 2026 LANDING PAGE
+   Liquid-Glass Design System with Lightning IA
+   ═══════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+/* Cursor Blink Animation */
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* Global Font Smoothing */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Liquid Glass Effect for Cards */
+.cp-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cp-card:hover {
+  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(168, 85, 247, 0.15);
+  box-shadow: 0 12px 40px rgba(168, 85, 247, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+  transform: translateY(-3px);
+}
+
+/* Premium Button Styles */
+.cp-btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+
+.cp-btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.cp-btn-primary:hover::before {
+  left: 100%;
+}
+
+/* Zapped Card Animation */
+@keyframes zap-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.3), 0 8px 24px rgba(168, 85, 247, 0.2);
+    transform: scale(1.05);
+  }
+  50% { 
+    box-shadow: 0 0 0 6px rgba(168, 85, 247, 0.15), 0 12px 32px rgba(168, 85, 247, 0.3);
+    transform: scale(1.08);
+  }
+}
+
+.zapped {
+  animation: zap-pulse 0.4s ease-out;
+}
+
+/* Firing State for AI Card */
+.firing {
+  animation: fire-glow 0.4s ease-out;
+}
+
+@keyframes fire-glow {
+  0%, 100% {
+    box-shadow: 0 8px 32px rgba(168, 85, 247, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+  50% {
+    box-shadow: 0 12px 48px rgba(168, 85, 247, 0.25), 0 0 0 2px rgba(168, 85, 247, 0.3);
+  }
+}
+
+/* Smooth Scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  #fc-grid {
+    grid-template-columns: 1fr !important;
+    padding: 0 0.5rem !important;
+  }
+  
+  h1 {
+    font-size: 2rem !important;
+  }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .cp-card {
+    border-width: 0.5px;
+  }
+}
