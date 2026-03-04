@@ -36,6 +36,7 @@ export default function LandingPage() {
   const featureCardsRef = useRef<(HTMLDivElement | null)[]>([])
 
   const phrases = [
+    'Sua clínica merece mais do que planilha e papel',
     'IA escreve evoluções em segundos',
     'Laudos PDF com CREFITO',
     'Dashboard financeiro nível banking',
@@ -239,28 +240,6 @@ export default function LandingPage() {
               </span>
             </motion.div>
 
-            <h1 style={{ 
-              fontFamily: '"Outfit", sans-serif',
-              fontSize: 'clamp(2.2rem, 5vw, 3.8rem)', 
-              fontWeight: 900,
-              letterSpacing: '-.055em',
-              lineHeight: '1.08',
-              marginBottom: '2rem'
-            }}>
-              <span style={{ 
-                display: 'block',
-                color: '#1a1a2e',
-                marginBottom: '0.15em'
-              }}>Sua clínica merece mais</span>
-              <span style={{ 
-                display: 'block',
-                background: 'linear-gradient(135deg, #d946ef 0%, #a855f7 45%, #818cf8 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text'
-              }}>do que planilha e papel.</span>
-            </h1>
-            
             {/* IA Card - Ultra Premium */}
             <div 
               ref={aiCardRef}
@@ -324,73 +303,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Feature Pills Grid */}
-            <div id="fc-grid" style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              gap: '0.75rem',
-              maxWidth: '900px',
-              margin: '0 auto 3rem',
-              padding: '0 1rem'
-            }}>
-              {[
-                { icon: '⚡', text: 'IA escreve evoluções em segundos' },
-                { icon: '📄', text: 'Laudos PDF com CREFITO' },
-                { icon: '📊', text: 'Dashboard financeiro nível banking' },
-                { icon: '✍️', text: 'Assinatura digital segura' },
-                { icon: '📅', text: 'Agenda inteligente' }
-              ].map((feature, index) => {
-                const isZapped = zappedCard === index
-                return (
-                  <div
-                    key={index}
-                    ref={el => { featureCardsRef.current[index] = el; }}
-                    id={`fc-${index}`}
-                    className={isZapped ? 'zapped' : ''}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.9)',
-                      backdropFilter: 'blur(12px)',
-                      border: '1px solid rgba(0, 0, 0, 0.06)',
-                      borderRadius: '14px',
-                      padding: '1rem 1.25rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.75rem',
-                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                      boxShadow: isZapped 
-                        ? '0 0 0 3px rgba(168, 85, 247, 0.3), 0 8px 24px rgba(168, 85, 247, 0.2)'
-                        : '0 2px 8px rgba(0, 0, 0, 0.04)',
-                      transform: isZapped ? 'scale(1.05)' : 'scale(1)',
-                      cursor: 'default'
-                    }}
-                  >
-                    <div style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '10px',
-                      background: isZapped ? 'rgba(168, 85, 247, 0.15)' : 'rgba(168, 85, 247, 0.08)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '1.1rem',
-                      flexShrink: 0,
-                      border: `1px solid ${isZapped ? 'rgba(168, 85, 247, 0.3)' : 'rgba(168, 85, 247, 0.12)'}`,
-                      transition: 'all 0.3s'
-                    }}>
-                      {feature.icon}
-                    </div>
-                    <span style={{
-                      fontSize: '0.875rem',
-                      fontWeight: 500,
-                      color: '#1a1a2e',
-                      fontFamily: '"DM Sans", sans-serif'
-                    }}>
-                      {feature.text}
-                    </span>
-                  </div>
-                )
-              })}
-            </div>
+            
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
               <Link 
@@ -535,7 +448,7 @@ export default function LandingPage() {
       <section id="funcionalidades" className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: 'rgba(248,249,252,.5)' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-bold mb-4" style={{ fontSize: '1.4rem', letterSpacing: '-.04em', color: 'rgba(18,18,28,.92)' }}>
+            <h2 style={{ fontFamily: '"Outfit", sans-serif', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 900, letterSpacing: '-.055em', background: 'linear-gradient(135deg, #d946ef 0%, #a855f7 45%, #818cf8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', marginBottom: '1rem' }}>
               Tudo que você precisa em um só lugar
             </h2>
             <p style={{ color: 'rgba(18,18,28,.50)' }}>
@@ -603,7 +516,7 @@ export default function LandingPage() {
       <section id="planos" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-bold mb-4" style={{ fontSize: '1.4rem', letterSpacing: '-.04em', color: 'rgba(18,18,28,.92)' }}>
+            <h2 style={{ fontFamily: '"Outfit", sans-serif', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 900, letterSpacing: '-.055em', background: 'linear-gradient(135deg, #d946ef 0%, #a855f7 45%, #818cf8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', marginBottom: '1rem' }}>
               Escolha o plano ideal para sua clínica
             </h2>
             <p style={{ color: 'rgba(18,18,28,.50)' }}>
@@ -714,7 +627,7 @@ export default function LandingPage() {
       <section id="depoimentos" className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: 'rgba(248,249,252,.5)' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-bold mb-4" style={{ fontSize: '1.4rem', letterSpacing: '-.04em', color: 'rgba(18,18,28,.92)' }}>
+            <h2 style={{ fontFamily: '"Outfit", sans-serif', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 900, letterSpacing: '-.055em', background: 'linear-gradient(135deg, #d946ef 0%, #a855f7 45%, #818cf8 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', marginBottom: '1rem' }}>
               O que dizem nossos clientes
             </h2>
           </div>

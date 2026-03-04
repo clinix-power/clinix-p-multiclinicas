@@ -60,9 +60,7 @@ body {
 }
 
 /* ========= TIPOGRAFIA (DENSIDADE APPLE) ========= */
-h1 { font-size: 1.9rem; letter-spacing: -.045em; }
-h2 { font-size: 1.4rem; letter-spacing: -.04em; }
-h3 { font-size: .95rem; letter-spacing: -.02em; }
+/* h1/h2/h3 size rules removed to allow inline styles */
 
 p, span, label {
   font-size: .9rem;
