@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
       const token = authHeader?.replace('Bearer ', '') || ''
       const { data: { user }, error: authErr } = await supabaseAdmin.auth.getUser(token)
       if (authErr || !user) {
+        console.error('[consultora/gerar] auth error:', authErr)
         return NextResponse.json({ error: 'Não autorizado.' }, { status: 401 })
       }
       const { data: prof } = await supabaseAdmin
@@ -62,6 +63,7 @@ export async function POST(req: NextRequest) {
         .eq('id', user.id)
         .single()
       if (!prof?.clinica_id || prof.role !== 'ADMIN') {
+        console.error('[consultora/gerar] acesso negado — prof:', prof)
         return NextResponse.json({ error: 'Acesso negado.' }, { status: 403 })
       }
       clinicaId = prof.clinica_id
@@ -71,15 +73,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'clinica_id não encontrado.' }, { status: 400 })
     }
 
-    // Verifica plano ULTIMATE
-    const { data: clinicaData } = await supabaseAdmin
+    // Busca clínica — usa nome_fantasia (campo correto)
+    const { data: clinicaData, error: clinicaErr } = await supabaseAdmin
       .from('clinicas')
-      .select('id, nome, planos(nome, recursos)')
+      .select('id, nome_fantasia, planos(nome, recursos)')
       .eq('id', clinicaId)
       .single()
 
+    if (clinicaErr) {
+      console.error('[consultora/gerar] erro ao buscar clínica:', clinicaErr)
+      return NextResponse.json({ error: 'Erro ao buscar dados da clínica.' }, { status: 500 })
+    }
+
     const plano = (clinicaData as any)?.planos
     const recursos = plano?.recursos || {}
+    console.log('[consultora/gerar] plano:', plano?.nome, '| recursos:', JSON.stringify(recursos))
+
     if (!recursos.ia_consultora) {
       return NextResponse.json({ error: 'Recurso ia_consultora não disponível no plano atual.' }, { status: 403 })
     }
@@ -137,8 +146,8 @@ export async function POST(req: NextRequest) {
     const saldo3m = receita3m - despesa3m
     const margem = receita3m > 0 ? ((saldo3m / receita3m) * 100).toFixed(1) : '0'
 
-    // Monta prompt estratégico
-    const clinicaNome = (clinicaData as any)?.nome || 'Clínica'
+    // Usa nome_fantasia (campo correto da tabela clinicas)
+    const clinicaNome = (clinicaData as any)?.nome_fantasia || 'Clínica'
     const dataAtual = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
 
     const prompt = `Você é a **Consultora IA Clinix**, especialista em gestão estratégica de clínicas de saúde no Brasil.
@@ -187,7 +196,7 @@ Seja direto, prático e específico para o contexto da clínica. Use dados reais
 
     const respText = await callGeminiREST({
       apiKey,
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.0-flash',
       prompt,
     })
 
@@ -195,13 +204,11 @@ Seja direto, prático e específico para o contexto da clínica. Use dados reais
     try {
       parsed = JSON.parse(respText)
     } catch {
-      // Tenta extrair JSON do texto
       const match = respText.match(/\{[\s\S]*\}/)
       if (!match) throw new Error('Resposta da IA não contém JSON válido.')
       parsed = JSON.parse(match[0])
     }
 
-    // Salva cada insight no banco
     const inserts = parsed.insights.map(insight => ({
       clinica_id: clinicaId,
       titulo: insight.titulo,

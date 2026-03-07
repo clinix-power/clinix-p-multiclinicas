@@ -96,7 +96,7 @@ p, span, label {
 }
 
 .cp-btn-primary {
-  background: linear-gradient(180deg, #c084fc, var(--m1) 55%, var(--m2)); /* brand-primary gradient */
+  background: linear-gradient(180deg, #c084fc, var(--m1) 55%, var(--m2));
   color: #fff;
   box-shadow: 0 12px 26px rgba(168,85,247,.22);
 }
@@ -113,28 +113,24 @@ p, span, label {
   box-shadow: var(--shadow-premium);
 }
 
-/* Mobile: Touch-optimized */
 @media (max-width: 768px) {
   .btn-premium {
-    height: 3rem; /* h-12 */
-    font-size: 1rem; /* text-base */
+    height: 3rem;
+    font-size: 1rem;
     box-shadow: 0 4px 12px rgba(168,85,247,.12);
   }
-  
   .btn-premium:active {
     transform: scale(0.95);
     transition: transform .1s ease;
   }
 }
 
-/* Desktop: Hover-optimized */
 @media (min-width: 769px) {
   .btn-premium {
-    height: 2.5rem; /* h-10 */
-    font-size: 0.875rem; /* text-sm */
+    height: 2.5rem;
+    font-size: 0.875rem;
     box-shadow: 0 2px 8px rgba(168,85,247,.08);
   }
-  
   .btn-premium:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(168,85,247,.2);
@@ -189,12 +185,8 @@ aside {
 }
 
 @keyframes logo-pulse {
-  0%, 100% {
-    filter: drop-shadow(0 0 6px rgba(168,85,247,0.25));
-  }
-  50% {
-    filter: drop-shadow(0 0 14px rgba(168,85,247,0.5));
-  }
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(168,85,247,0.25)); }
+  50%       { filter: drop-shadow(0 0 14px rgba(168,85,247,0.5)); }
 }
 
 /* ========= MÉTODO DE 1 MILHÃO: IMG PWA ========= */
@@ -205,68 +197,32 @@ aside {
 
 /* ========= DESKTOP: SCROLLBAR SLIM LUXO ========= */
 @media (min-width: 769px) {
-  /* Webkit browsers (Chrome, Safari, Edge) */
-  ::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: rgba(168,85,247,0.3);
-    border-radius: 999px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(168,85,247,0.5);
-  }
-  
-  /* Firefox */
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(168,85,247,0.3) transparent;
-  }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(168,85,247,0.3); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(168,85,247,0.5); }
+  * { scrollbar-width: thin; scrollbar-color: rgba(168,85,247,0.3) transparent; }
 }
 
 /* ========= MOBILE: GLASSMORPHISM METÁLICO ========= */
 @media (max-width: 768px) {
-  /* Touch optimizations */
-  * {
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  /* Prevent iOS auto-zoom on inputs — force 16px minimum */
-  input, select, textarea {
-    font-size: 16px !important;
-  }
-
+  * { -webkit-tap-highlight-color: transparent; }
+  input, select, textarea { font-size: 16px !important; }
   body {
     padding-bottom: env(safe-area-inset-bottom);
     overscroll-behavior-y: contain;
     touch-action: manipulation;
   }
-
   main {
     padding-top: calc(64px + env(safe-area-inset-top));
     padding-bottom: calc(80px + env(safe-area-inset-bottom));
   }
-
-  .cp-card {
-    border-radius: 26px;
-    box-shadow: 0 10px 28px rgba(18,18,28,.08);
-  }
-  
-  /* TopBar Glassmorphism Metálico */
+  .cp-card { border-radius: 26px; box-shadow: 0 10px 28px rgba(18,18,28,.08); }
   .mobile-topbar {
     backdrop-filter: blur(16px);
     background: rgba(139,92,246,0.05);
     border-bottom: 1px solid rgba(168,85,247,0.2);
   }
-  
-  /* BottomBar Glassmorphism Metálico */
   .mobile-bottombar {
     backdrop-filter: blur(16px);
     background: rgba(139,92,246,0.05);
@@ -276,27 +232,122 @@ aside {
 
 /* ========= PRINT: SCOPED RESET ========= */
 @media print {
-  body {
-    background: #fff !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  /* Hide all UI chrome when printing */
-  aside,
-  nav,
-  .print\:hidden,
-  .mobile-topbar,
-  .mobile-bottombar {
-    display: none !important;
-  }
-
-  /* Reset page containers so laudo fills the print area */
-  #__app,
-  #__app > div {
-    padding: 0 !important;
-    margin: 0 !important;
-    min-height: auto !important;
-    overflow: visible !important;
-  }
+  body { background: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  aside, nav, .print\:hidden, .mobile-topbar, .mobile-bottombar { display: none !important; }
+  #__app, #__app > div { padding: 0 !important; margin: 0 !important; min-height: auto !important; overflow: visible !important; }
 }
+
+/* ============================================================================
+   CONSULTORA CLINIX — ROBÔ TAMAGOTCHI ANIMADO
+   Keyframes para todas as animações do robô virtual
+   ============================================================================ */
+
+/* Flutuação idle suave */
+@keyframes robot-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+/* Piscar olhos */
+@keyframes robot-blink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  95%            { transform: scaleY(0.08); }
+}
+
+/* Acenar com a cabeça */
+@keyframes robot-nod {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  25%       { transform: translateY(-4px) rotate(-3deg); }
+  75%       { transform: translateY(-4px) rotate(3deg); }
+}
+
+/* Pensando — balanço leve */
+@keyframes robot-think {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33%       { transform: translateY(-6px) rotate(-5deg); }
+  66%       { transform: translateY(-6px) rotate(5deg); }
+}
+
+/* Dormindo — balanço mínimo + Zzz */
+@keyframes robot-sleep {
+  0%, 100% { transform: translateY(0px) rotate(-2deg); }
+  50%       { transform: translateY(3px) rotate(2deg); }
+}
+
+/* Acordando — sacudida */
+@keyframes robot-wake {
+  0%   { transform: rotate(-8deg) scale(0.95); }
+  25%  { transform: rotate(8deg) scale(1.05); }
+  50%  { transform: rotate(-4deg) scale(1.02); }
+  75%  { transform: rotate(4deg) scale(1.01); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+/* Animado / Pulando */
+@keyframes robot-excited {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  20%       { transform: translateY(-14px) scale(1.06); }
+  40%       { transform: translateY(0px) scale(0.97); }
+  60%       { transform: translateY(-10px) scale(1.04); }
+  80%       { transform: translateY(0px) scale(0.99); }
+}
+
+/* Acenando — rotação lateral */
+@keyframes robot-wave {
+  0%, 100% { transform: rotate(0deg); }
+  20%       { transform: rotate(-12deg) translateY(-4px); }
+  40%       { transform: rotate(12deg) translateY(-4px); }
+  60%       { transform: rotate(-8deg) translateY(-4px); }
+  80%       { transform: rotate(8deg) translateY(-4px); }
+}
+
+/* Surpreso — expansão rápida */
+@keyframes robot-surprised {
+  0%   { transform: scale(1); }
+  15%  { transform: scale(1.18) translateY(-6px); }
+  30%  { transform: scale(0.95) translateY(0px); }
+  50%  { transform: scale(1.08) translateY(-3px); }
+  100% { transform: scale(1) translateY(0px); }
+}
+
+/* Glow nos olhos — pulso cyan */
+@keyframes eye-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(6,182,212,0.6)); }
+  50%       { filter: drop-shadow(0 0 12px rgba(6,182,212,1)); }
+}
+
+/* Zzz flutuando para cima */
+@keyframes zzz-float {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0.6); }
+  20%  { opacity: 1; }
+  80%  { opacity: 0.7; }
+  100% { opacity: 0; transform: translate(10px, -28px) scale(1.1); }
+}
+
+/* Balão de fala aparecendo */
+@keyframes balloon-pop {
+  0%   { opacity: 0; transform: scale(0.7) translateY(8px); }
+  60%  { transform: scale(1.04) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Glow do painel da consultora */
+@keyframes panel-glow {
+  0%, 100% { box-shadow: 0 32px 80px rgba(168,85,247,0.25), 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08); }
+  50%       { box-shadow: 0 32px 80px rgba(168,85,247,0.40), 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.12); }
+}
+
+/* Classes utilitárias do robô */
+.robot-float    { animation: robot-float    3.5s ease-in-out infinite; }
+.robot-blink    { animation: robot-blink    3s   ease-in-out infinite; }
+.robot-nod      { animation: robot-nod      1s   ease-in-out; }
+.robot-think    { animation: robot-think    2s   ease-in-out infinite; }
+.robot-sleep    { animation: robot-sleep    2s   ease-in-out infinite; }
+.robot-wake     { animation: robot-wake     0.6s ease-out; }
+.robot-excited  { animation: robot-excited  0.8s ease-in-out; }
+.robot-wave     { animation: robot-wave     1s   ease-in-out; }
+.robot-surprised{ animation: robot-surprised 0.7s ease-out; }
+.eye-glow       { animation: eye-glow       2s   ease-in-out infinite; }
+.zzz-float      { animation: zzz-float      2s   ease-in-out infinite; }
+.balloon-pop    { animation: balloon-pop    0.35s cubic-bezier(.16,1,.3,1) forwards; }
+.panel-glow     { animation: panel-glow     4s   ease-in-out infinite; }

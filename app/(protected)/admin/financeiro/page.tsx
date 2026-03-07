@@ -166,16 +166,28 @@ function ModalLancamento({ clinicaId, onClose, onSaved }: ModalLancamentoProps) 
     setSaving(true)
     setErro(null)
     try {
-      const { error } = await supabase.from('lancamentos_financeiros').insert({
-        clinica_id: clinicaId,
-        tipo,
-        categoria,
-        descricao: descricao || null,
-        valor: parseFloat(valor.replace(',', '.')),
-        data_lancamento: data,
-        status,
+      const { data: sessionData } = await supabase.auth.getSession()
+      const token = sessionData.session?.access_token
+      if (!token) throw new Error('Sessão expirada. Faça login novamente.')
+
+      const res = await fetch('/api/financeiro/lancamentos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          tipo,
+          categoria,
+          descricao: descricao || null,
+          valor: parseFloat(valor.replace(',', '.')),
+          data_lancamento: data,
+          status,
+        }),
       })
-      if (error) throw error
+
+      const result = await res.json()
+      if (!res.ok) throw new Error(result.error || 'Erro ao salvar.')
       onSaved()
       onClose()
     } catch (e: any) {
@@ -425,39 +437,43 @@ export default function FinanceiroPage() {
       const trintaISO = trinta.toISOString().split('T')[0]
       const inicioMesObj = new Date(inicioMes)
 
-      const { data: pacAtivos } = await supabase
-        .from('pacientes')
-        .select('id, nome, whatsapp, updated_at')
-        .eq('clinica_id', clinicaId)
-        .eq('status', 'Ativo')
+      try {
+        const { data: pacAtivos } = await supabase
+          .from('pacientes')
+          .select('id, nome, whatsapp, updated_at')
+          .eq('clinica_id', clinicaId)
+          .eq('status', 'Ativo')
 
-      const { data: pacInativos } = await supabase
-        .from('pacientes')
-        .select('id, nome, whatsapp, updated_at')
-        .eq('clinica_id', clinicaId)
-        .eq('status', 'Inativo')
-        .gte('updated_at', inicioMes)
+        const { data: pacInativos } = await supabase
+          .from('pacientes')
+          .select('id, nome, whatsapp, updated_at')
+          .eq('clinica_id', clinicaId)
+          .eq('status', 'Inativo')
+          .gte('updated_at', inicioMes)
 
-      // Agendamentos recentes por paciente
-      const { data: agsRecentes } = await supabase
-        .from('agendamentos')
-        .select('paciente_id, data')
-        .eq('clinica_id', clinicaId)
-        .gte('data', trintaISO)
-        .in('status', ['REALIZADO', 'PENDENTE', 'CONFIRMADO'])
+        const { data: agsRecentes } = await supabase
+          .from('agendamentos')
+          .select('paciente_id, data')
+          .eq('clinica_id', clinicaId)
+          .gte('data', trintaISO)
+          .in('status', ['REALIZADO', 'PENDENTE', 'CONFIRMADO'])
 
-      const comAtividade = new Set((agsRecentes || []).map((a: any) => a.paciente_id))
+        const comAtividade = new Set((agsRecentes || []).map((a: any) => a.paciente_id))
 
-      const risco: PacienteRisco[] = (pacAtivos || [])
-        .filter((p: any) => !comAtividade.has(p.id))
-        .map((p: any) => ({ id: p.id, nome: p.nome, whatsapp: p.whatsapp, ultimo_atendimento: p.updated_at?.slice(0, 10) || null, tipo: 'risco' as const }))
-        .slice(0, 10)
+        const risco: PacienteRisco[] = (pacAtivos || [])
+          .filter((p: any) => !comAtividade.has(p.id))
+          .map((p: any) => ({ id: p.id, nome: p.nome, whatsapp: p.whatsapp, ultimo_atendimento: p.updated_at?.slice(0, 10) || null, tipo: 'risco' as const }))
+          .slice(0, 10)
 
-      const perdidos: PacienteRisco[] = (pacInativos || [])
-        .map((p: any) => ({ id: p.id, nome: p.nome, whatsapp: p.whatsapp, ultimo_atendimento: p.updated_at?.slice(0, 10) || null, tipo: 'perdido' as const }))
-        .slice(0, 5)
+        const perdidos: PacienteRisco[] = (pacInativos || [])
+          .map((p: any) => ({ id: p.id, nome: p.nome, whatsapp: p.whatsapp, ultimo_atendimento: p.updated_at?.slice(0, 10) || null, tipo: 'perdido' as const }))
+          .slice(0, 5)
 
-      setPacientesRisco([...risco, ...perdidos])
+        setPacientesRisco([...risco, ...perdidos])
+      } catch (retencaoErr) {
+        console.warn('[financeiro] Radar de retenção ignorado por erro:', retencaoErr)
+        setPacientesRisco([])
+      }
 
       // 9. Stats por convênio
       const { data: convList } = await supabase
